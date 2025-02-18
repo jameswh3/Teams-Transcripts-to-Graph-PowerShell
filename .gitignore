@@ -1,0 +1,6 @@
+Testing.ps1
+transcript.txt
+Resolve-TAPnPPowerShellConflicts.ps1
+New-PnPEntraAppRegistration.ps1
+CreateAppAccessPolicy.ps1
+Add-TranscriptItemsToWordDoc.ps1
