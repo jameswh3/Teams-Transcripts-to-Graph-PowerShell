@@ -1,11 +1,3 @@
-function ConvertTo-Seconds {
-    param (
-        [string]$time
-    )
-    $parts = $time -split "[:.]"
-    return [int]$parts[0] * 3600 + [int]$parts[1] * 60 + [int]$parts[2]
-}
-
 #STEP 0
 #Connect to Graph#
 $clientId="<EntraAppId that you've registered>"
@@ -52,7 +44,7 @@ $transcriptFile=Get-MeetingTranscript -meetingOrganizerUserId $meetingRecordingI
 
 #STEP 4
 #Parse Transcript File#
-$transcriptData=Format-TranscriptByTime -TranscriptFile $transcriptFile `
+$transcriptData=Format-TeamsTranscriptByTime.ps1 -TranscriptFile $transcriptFile `
     -TimeIncrement 30
 
 #STEP 5a
@@ -68,7 +60,12 @@ Connect-PnPOnline -Url "$SPOAdminUrl" `
 #STEP 5b
 #Add Transcript Items to Graph#
 Add-TranscriptItemsToGraph -TranscriptItems $transcriptData `
-    -MeetingRecordingInfo $meetingRecordingInfo `
-    -RecordingFileInfo $recordingFileInfo `
     -StreamEndpoint $streamEndpoint `
     -SearchExternalConnectionId $searchExternalConnectionId
+    -meetingStartDateTime [System.DateTime]($meetingRecordingInfo.StartDateTime)
+    -meetingEndDateTime [System.DateTime]($meetingRecordingInfo.EndDateTime)
+    -meetingSubject $meetingRecordingInfo.MeetingSubject
+    -meetingOrganizer $meetingRecordingInfo.MeetingHostId
+    -fileName $recordingFileInfo.FileName
+    -fileExtension $recordingFileInfo.FileType
+    -lastModifiedDateTime [System.DateTime]($meetingRecordingInfo.EndDateTime)

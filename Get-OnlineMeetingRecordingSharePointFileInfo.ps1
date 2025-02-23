@@ -28,7 +28,7 @@ Function Get-OnlineMeetingRecordingSharePointFileInfo {
             $CertificateThumbprint,
         [Parameter(Mandatory = $true)]
             [string]
-        $ClientId,
+            $ClientId,
             [Parameter(Mandatory = $true)]
             [string]
             $Tenant,

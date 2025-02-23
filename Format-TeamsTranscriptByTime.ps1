@@ -1,4 +1,12 @@
-Function Format-TranscriptByTime {
+function ConvertTo-Seconds {
+    param (
+        [string]$time
+    )
+    $parts = $time -split "[:.]"
+    return [int]$parts[0] * 3600 + [int]$parts[1] * 60 + [int]$parts[2]
+}
+
+Function Format-TeamsTranscriptByTime {
     param(
         [string]$TranscriptFile, #WebVTT file
         [int]$TimeIncrement = 30
@@ -15,6 +23,9 @@ Function Format-TranscriptByTime {
         $transcriptData = @{}
         $currentSpeakers=@()
         $transcriptKey=""
+
+        $groupedSentences = @()
+
     }
     PROCESS{
         # Process each line in the WebVTT file
@@ -28,7 +39,6 @@ Function Format-TranscriptByTime {
                 #$endTime = ConvertTo-Seconds $matches[2] #didnt use this previously, but leaving it in case it's needed later
 
                 if ($startTime -lt $TimeIncrement) {
-                    $currentSpeakers=@()
                     $transcriptKey="[$([TimeSpan]::FromSeconds(0).ToString()) - $([TimeSpan]::FromSeconds($TimeIncrement).ToString())]"
                     if (-not ($transcriptData.ContainsKey($transcriptKey))) {
                         Write-host "    Adding new transcript segment: $transcriptKey"
@@ -70,10 +80,17 @@ Function Format-TranscriptByTime {
             $transcriptData[$transcriptKey].TranscriptText += $currentSegment
             $transcriptData[$transcriptKey].Speakers += $currentSpeakers
             $transcriptData[$transcriptKey].Speakers = $transcriptData[$transcriptKey].Speakers | Select-Object -Unique
-            
         }
     }
-    END{
-        return $transcriptData
+    END {
+        foreach ($transcriptDatum in $transcriptData.GetEnumerator()) {
+            $groupedSentences += [PSCustomObject]@{
+                Sentence  = ($transcriptDatum.Value.TranscriptText -join " ")
+                StartTime = [int]$transcriptDatum.Value.StartTime
+                EndTime   = [int]$transcriptDatum.Value.EndTime
+                Speakers = ($transcriptDatum.Value.Speakers | Select-Object -Unique)
+            }
+        }
+        return $groupedSentences
     }
 }

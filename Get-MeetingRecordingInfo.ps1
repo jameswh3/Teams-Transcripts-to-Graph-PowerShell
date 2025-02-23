@@ -1,3 +1,5 @@
+#Requires -Modules Microsoft.Graph
+
 function Get-MeetingRecordingInfo {
     param(
         [string]$meetingOrganizerUserId,

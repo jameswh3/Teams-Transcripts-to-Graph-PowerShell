@@ -11,11 +11,3 @@ Connect-PnPOnline -Interactive `
     -ClientId $clientId
 
 Get-PnpSearchExternalItem -ConnectionId $searchExternalConnectionId 
-
-<#
-    #this will clear items in the external search index
-    $clearGraphData=$false
-    if ($clearGraphData) {
-        Get-PnPSearchExternalItem -ConnectionId $searchExternalConnectionId | Select-Object Id | ForEach-Object { Remove-PnPSearchExternalItem -ConnectionId $searchExternalConnectionId -ItemId $_.Id }
-    }
-#>
