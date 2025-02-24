@@ -33,8 +33,8 @@ This script retrieves information about Microsoft Teams meeting recordings, incl
 #### Required Permissions
 |API|Type|Permission|Note|
 |---|---|---|---|
-| Microsoft Graph | Application | User.Read.All |  |
-| Microsoft Graph | Application | OnlineMeetingRecording.Read.All |  |
+| Microsoft Graph | Application | User.Read.All | - |
+| Microsoft Graph | Application | OnlineMeetingRecording.Read.All | - |
 
 
 #### Inputs
@@ -44,7 +44,6 @@ This script retrieves information about Microsoft Teams meeting recordings, incl
 | startDateTime | String | Start Time of the Search Range |
 | endDateTime | String | End Time of the Search Range |
 | MeetingSubject | String | Subject of the Meeting |
-
 
 #### Outputs
 
@@ -71,7 +70,7 @@ This script retrieves information about the SharePoint file associated with a Mi
 #### Required Permissions
 |API|Type|Permission|Note|
 |---|---|---|---|
-| SharePoint | Application | Sites.Read.All |  |
+| SharePoint | Application | Sites.Read.All | - |
 
 
 #### Inputs
@@ -122,9 +121,9 @@ This script retrieves the transcript file for a Microsoft Teams meeting.
 #### Required Permissions
 |API|Type|Permission|Note|
 |---|---|---|---|
-| Microsoft Graph | Application | User.Read.All |  |
-| Microsoft Graph | Application | OnlineMeetingRecording.Read.All |  |
-| Microsoft Graph | Application | OnlineMeetingTranscript.Read.All |  |
+| Microsoft Graph | Application | User.Read.All | - |
+| Microsoft Graph | Application | OnlineMeetingRecording.Read.All | - |
+| Microsoft Graph | Application | OnlineMeetingTranscript.Read.All | - |
 
 
 #### Inputs
