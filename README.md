@@ -1,6 +1,6 @@
 # Teams Transcripts to Graph PowerShell
 
-This repository contains PowerShell scripts to manage and process Microsoft Teams meeting transcripts and recordings, and add them to Microsoft Graph. The master script is `Add-TranscriptionItemsToGraph.ps1`, which orchestrates the entire process.
+This repository contains PowerShell scripts to manage and process Microsoft Teams meeting transcripts and recordings, and add them to Microsoft Graph. The master script is `Add-TranscriptionsToGraph.ps1`, which orchestrates the entire process.
 
 ## Prerequisites
 
@@ -11,19 +11,20 @@ This repository contains PowerShell scripts to manage and process Microsoft Team
   - `MicrosoftTeams`
 - Entra App Registration with Appropriate permissions (details below)
 
+** If you run into issues with conflicts between PnP.PowerShell and Microsoft.Graph, check out https://github.com/TobiasAT/PowerShell/blob/main/Documentation/Resolve-TAPnPPowerShellConflicts.md for a way to address that issue. **
+
 ## Scripts Overview
 
-| Script Name                                      | Description                                                                 |
-|--------------------------------------------------|-----------------------------------------------------------------------------|
-| `Add-TranscriptionItemsToGraph.ps1`              | This is the main script that calls the other scripts in series. |
-| `Get-MeetingRecordingInfo.ps1`                   | Retrieves information about Microsoft Teams meeting recordings.             |
+| Script Name| Description  |
+| --- |---|
+| `Add-TranscriptionItemsToGraph.ps1` | Adds the formatted transcript items to Microsoft Graph. |
+| `Get-MeetingRecordingInfo.ps1` | Retrieves information about Microsoft Teams meeting recordings. |
 | `Get-OnlineMeetingRecordingSharePointFileInfo.ps1` | Retrieves information about the SharePoint file associated with a Microsoft Teams meeting recording. |
-| `Get-MeetingTranscript.ps1`                      | Retrieves the transcript file for a Microsoft Teams meeting.                |
-| `Format-TeamsTranscriptByTime.ps1`               | Formats the transcript data by time increments.                             |
-| `Add-TranscriptItemsToGraph.ps1`                 | Adds the formatted transcript items to Microsoft Graph.                     |
-| `Get-StreamTranscriptViaSharePoint.ps1`          | Retrieves the transcript files for Microsoft Stream videos stored in a SharePoint document library. |
-| `Get-WebVTTContent.ps1`                          | Processes WebVTT files and extracts transcript data, optionally grouping sentences into segments. This can accomodate both Teams Recording Transcripts and Stream transcripts created when uploading files to SharePoint. |
-
+| `Get-MeetingTranscript.ps1` | Retrieves the transcript file for a Microsoft Teams meeting. |
+| `Format-TeamsTranscriptByTime.ps1` | Formats the transcript data by time increments.|
+| `Add-TranscriptItemsToGraph.ps1` | This is the main script that calls the other scripts in series.|
+| `Get-StreamTranscriptViaSharePoint.ps1` | Retrieves the transcript files for Microsoft Stream videos stored in a SharePoint document library. |
+| `Get-WebVTTContent.ps1` | Processes WebVTT files and extracts transcript data, optionally grouping sentences into segments. This can accomodate both Teams Recording Transcripts and Stream transcripts created when uploading files to SharePoint. |
 
 ### 1. `Get-MeetingRecordingInfo.ps1`
 
@@ -232,6 +233,8 @@ Add-TranscriptItemsToGraph -TranscriptItems $transcriptData `
 ### `Get-StreamTranscriptViaSharePoint.ps1`
 
 This script retrieves the transcript files for Microsoft Stream videos stored in a SharePoint document library, and can be used to grab those if the recording was not made in Teams.
+
+Thanks to https://www.techmikael.com/2021/01/microsoft-graph-encoding-and-decoding.html for the pointer on how to construct the Drive Id!
 
 #### Required Permissions
 |API|Type|Permission|Note|
