@@ -170,7 +170,11 @@ This processes locally, so there are no explicit permissions required.
 
 #### Outputs
 
-- `sentences`: An object containing the formatted transcript data.
+- `sentences` or `groupedSentences`: An object containing the formatted transcript data with the following properties:
+    - Sentence - sentence or groupped sentences as an array 
+    - StartTime - start time of sentence in seconds
+    - EndTime - end time of sentence in seconds
+    - Speakers - array of speaker names for this segment
 
 #### Sample Usage
 
