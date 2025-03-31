@@ -55,6 +55,6 @@ function Get-StreamTranscriptViaSharePoint {
         }
     }
     END {
-        
+        return $transcripts
     }
 }

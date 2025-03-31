@@ -50,7 +50,7 @@ Function Get-OnlineMeetingRecordingSharePointFileInfo {
             $baseUrl=$OneDriveBaseUrl
         } else {
             #Teams Recording
-            #todo - do some research on how to isolate Teams Recording file
+            #todo - do some research on how to isolate Teams Channel Recording file
             write-host "This script doesn't yet support Teams Recordings" -ForegroundColor Red
 
         }        
