@@ -52,6 +52,13 @@ Set-PnPSearchExternalSchema -ConnectionId $searchExternalConnectionId -SchemaAsT
       "isRefinable": "true"
     },
     {
+      "name": "category",
+      "type": "String",
+      "isSearchable": "true",
+      "isQueryable": "true",
+      "isRetrievable": "true"
+    },
+    {
       "name": "meetingSubject",
       "type": "String",
       "isSearchable": "true",

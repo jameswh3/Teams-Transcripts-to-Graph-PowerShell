@@ -63,8 +63,10 @@ Connect-PnPOnline -Url "$SPOAdminUrl" `
 
 #STEP 7
 #Add Transcript Items to Graph#
+$category="<add your category for this video>"
 Add-TranscriptItemsToGraph -TranscriptItems $transcriptData `
     -StreamEndpoint $streamEndpoint `
+    -Category $category `
     -SearchExternalConnectionId $searchExternalConnectionId `
     -MeetingStartDateTime $meetingRecordingInfo.StartDateTime `
     -MeetingEndDateTime $meetingRecordingInfo.EndDateTime `

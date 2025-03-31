@@ -27,6 +27,7 @@ function Add-TranscriptItemsToGraph {
         $MeetingEndDateTime,
         $MeetingSubject,
         $MeetingOrganizer,
+        $Category,
         $FileName,
         $FileExtension,
         $FileUrl,
@@ -61,31 +62,13 @@ function Add-TranscriptItemsToGraph {
             $encodedFileRef=[URI]::EscapeUriString($FileUrl).replace("/","%2F")
             $playbackOptions=[URI]::EscapeUriString("&nav={""playbackOptions"":{""startTimeInSeconds"":$segmentStart}}")
             $fullUrl="$SiteUrl$StreamEndpoint"+"?id=$encodedFileRef"+"$playbackOptions"
-            <#
-                $Properties=@{
-                    "segmentId" = "$segmentId";
-                    "segmentTitle"= "$segmentTitle";
-                    "segmentStart" = "$segmentStart";
-                    "segmentEnd" = "$segmentEnd";
-                    "meetingSubject" = "$meetingSubject";
-                    "meetingStartDateTime" = $meetingStartDateTime;
-                    "meetingEndDateTime" = $meetingEndDateTime;
-                    "lastModifiedDateTime" = $lastModifiedDateTime;
-                    "url" = "$fullUrl";
-                    "speakerNames" = "$speakerNames";
-                    "segmentText" = "$segmentText";
-                    "fileName" = "$fileName";
-                    "fileExtension" = "$fileExtension";
-                    "meetingOrganizer" = "$meetingOrganizer"  
-                }
-                write-host $Properties
-            #>
             $speakerNames=$transcriptItem.Speakers -join ","
             $segmentText=$transcriptItem.Sentence | Out-String
             Set-PnPSearchExternalItem -ConnectionId $SearchExternalConnectionId `
                 -ItemId (new-guid) `
                 -Properties @{
                     "segmentId" = "$segmentId";
+                    "category" = "$Category";
                     "segmentTitle"= "$segmentTitle";
                     "segmentStart" = "$segmentStart";
                     "segmentEnd" = "$segmentEnd";

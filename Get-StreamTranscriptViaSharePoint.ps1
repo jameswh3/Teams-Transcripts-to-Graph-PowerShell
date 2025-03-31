@@ -28,12 +28,15 @@ function Get-StreamTranscriptViaSharePoint {
             $folderUrl="$folderUrl/$SharePointFolder"
         }
         Write-Host $folderUrl
-        $files=get-pnpfileinfolder -FolderSiteRelativeUrl $folderUrl -Connection $pnpWebConnection -Includes Title,UniqueId,ServerRelativeUrl,Name
+        $files=get-pnpfileinfolder -FolderSiteRelativeUrl $folderUrl -Connection $pnpWebConnection -Includes UniqueId,ServerRelativeUrl,Name
         $token=Get-PnPAccessToken -ResourceTypeName SharePoint
+        $transcripts=@()
     }
     PROCESS {
         foreach ($file in $files) {
             $itemId=$file.UniqueId
+            $itemName=$file.Name
+            $itemName=$itemName.Replace("-Meeting Recording.mp4","").Replace("mp4","")
             $transcriptsRequestUrl="$($site.Url)/_api/v2.1/drives/$driveId/items/$itemId/media/transcripts"
             write-host $transcriptsRequestUrl
             $response=Invoke-PnPSPRestMethod -Method Get -Url $transcriptsRequestUrl -Connection $PnPWebConnection
@@ -44,8 +47,9 @@ function Get-StreamTranscriptViaSharePoint {
                     "Authorization" = "Bearer $token"
                 }
                 Invoke-WebRequest -uri $transcript.temporaryDownloadUrl `
-                    -OutFile "$DestinationFolder\transcript - $i.vtt" `
+                    -OutFile "$DestinationFolder\$itemName - $i.vtt" `
                     -Headers $headers
+                $transcripts+="$DestinationFolder\$itemName - $i.vtt"
                 $i=$i+1
             }
         }
@@ -54,20 +58,3 @@ function Get-StreamTranscriptViaSharePoint {
         
     }
 }
-
-#update Values below to Get Stream Transcripts Via SharePoint file APIs
-$clientId = "<your Entra App Id>"
-$siteUrl = "https://<yourtenant>.sharepoint.com/sites/<yoursite>/" #note that if your site uses something other than /sites/ as the path, you need to update that as well
-
-#connect to PnP Online
-$pnpWebConnection=Connect-PnPOnline -Url $siteUrl `
-                  -ClientId $clientId `
-                  -Interactive `
-                  -ForceAuthentication `
-                  -ReturnConnection
-
-#Call Script; if you have a subfolder, you can add the -Folder parameter
-Get-StreamTranscriptViaSharePoint -SiteUrl $siteUrl `
-    -DocumentLibrary "<your document library>" `
-    -PnPWebConnection $pnpWebConnection `
-    -DestinationFolder "<output location>" #e.g. c:\temp

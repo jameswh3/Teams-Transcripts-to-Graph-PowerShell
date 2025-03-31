@@ -4,3 +4,4 @@ Resolve-TAPnPPowerShellConflicts.ps1
 New-PnPEntraAppRegistration.ps1
 CreateAppAccessPolicy.ps1
 Add-TranscriptItemsToWordDoc.ps1
+Testing2.ps1

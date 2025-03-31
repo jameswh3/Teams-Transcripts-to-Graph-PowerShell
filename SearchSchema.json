@@ -63,6 +63,13 @@
         "isRetrievable": "true"
       },
       {
+        "name": "category",
+        "type": "String",
+        "isSearchable": "true",
+        "isQueryable": "true",
+        "isRetrievable": "true"
+      },
+      {
         "name": "segmentText",
         "type": "String",
         "isSearchable": "true",

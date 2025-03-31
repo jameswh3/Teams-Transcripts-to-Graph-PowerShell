@@ -1,0 +1,50 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "columns": [
+                {
+                    "width": 8,
+                    "spacing": "medium",
+                    "items": [
+                        {
+                            "weight": "bolder",
+                            "color": "accent",
+                            "size": "medium",
+                            "text": "[${meetingSubject} - (${segmentStart} - ${segmentEnd})](${url})",
+                            "type": "TextBlock",
+                            "style": "heading"
+                        },
+                        {
+                            "text": "${segmentText}",
+                            "type": "TextBlock",
+                            "maxLines": 3,
+                            "size": "Small"
+                        },
+                        {
+                            "spacing": "Small",
+                            "text": "Speakers: ${speakerNames}",
+                            "size": "Small",
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "wrap": true,
+                            "maxLines": 3
+                        },
+                        {
+                            "spacing": "Small",
+                            "text": "Recorded on ${meetingStartDateTime}",
+                            "size": "Small",
+                            "type": "TextBlock",
+                            "wrap": true,
+                            "maxLines": 3
+                        }
+                    ],
+                    "type": "Column"
+                }
+            ],
+            "type": "ColumnSet"
+        }
+    ],
+    "type": "AdaptiveCard"
+}

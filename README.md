@@ -11,13 +11,13 @@ This repository contains PowerShell scripts to manage and process Microsoft Team
   - `MicrosoftTeams`
 - Entra App Registration with Appropriate permissions (details below)
 
-** If you run into issues with conflicts between PnP.PowerShell and Microsoft.Graph, check out https://github.com/TobiasAT/PowerShell/blob/main/Documentation/Resolve-TAPnPPowerShellConflicts.md for a way to address that issue. **
+**If you run into issues with conflicts between PnP.PowerShell and Microsoft.Graph, check out https://github.com/TobiasAT/PowerShell/blob/main/Documentation/Resolve-TAPnPPowerShellConflicts.md.**
 
 ## Scripts Overview
 
 | Script Name| Description  |
 | --- |---|
-| `Add-TranscriptionItemsToGraph.ps1` | Adds the formatted transcript items to Microsoft Graph. |
+| `Add-TranscriptionItemsToGraph.ps1` | Adds the formatted transcript items to Microsoft Graph. Now supports video categorization. |
 | `Get-MeetingRecordingInfo.ps1` | Retrieves information about Microsoft Teams meeting recordings. |
 | `Get-OnlineMeetingRecordingSharePointFileInfo.ps1` | Retrieves information about the SharePoint file associated with a Microsoft Teams meeting recording. |
 | `Get-MeetingTranscript.ps1` | Retrieves the transcript file for a Microsoft Teams meeting. |
@@ -31,6 +31,7 @@ This repository contains PowerShell scripts to manage and process Microsoft Team
 This script retrieves information about Microsoft Teams meeting recordings, including the meeting host, meeting ID, and content correlation ID.
 
 #### Required Permissions
+
 |API|Type|Permission|Note|
 |---|---|---|---|
 | Microsoft Graph | Application | User.Read.All | - |
@@ -38,6 +39,7 @@ This script retrieves information about Microsoft Teams meeting recordings, incl
 
 
 #### Inputs
+
 | Input Name | Type | Notes |
 |--- | --- | --- |
 | meetingOrganizerUserId | String | Organizer's UPN or Entra ID |
@@ -68,12 +70,14 @@ $meetingRecordingInfo=Get-MeetingRecordingInfo -meetingOrganizerUserId $meetingO
 This script retrieves information about the SharePoint file associated with a Microsoft Teams meeting recording.
 
 #### Required Permissions
+
 |API|Type|Permission|Note|
 |---|---|---|---|
 | SharePoint | Application | Sites.Read.All | - |
 
 
 #### Inputs
+
 | Input Name | Type | Notes |
 |--- | --- | --- |
 | OneDriveBaseUrl | String | BaseUrl of OneDrive (e.g. https://\<tenant name\>-my.sharepoint.com/personal/); Part of OneDrive Parameter Set |
@@ -90,6 +94,7 @@ This script retrieves information about the SharePoint file associated with a Mi
 #### Outputs
 
 `recordingFileInfo`: An object containing information about the SharePoint file associated with the meeting recording:
+
 - Title - Title of the File/Subject of the Meeting
 - FileUrl - URL of the Recording
 - FileName - File Name of the Recording
@@ -119,6 +124,7 @@ $recordingFileInfo=Get-OnlineMeetingRecordingSharePointFileInfo -meetingOrganize
 This script retrieves the transcript file for a Microsoft Teams meeting.
 
 #### Required Permissions
+
 |API|Type|Permission|Note|
 |---|---|---|---|
 | Microsoft Graph | Application | User.Read.All | - |
@@ -167,7 +173,6 @@ This processes locally, so there are no explicit permissions required.
 | TimeIncrement | Int | Time increment (in seconds) used to chunk the transcript for loading into the Graph |
 | Speakers | Array | Optional if you want to override the Speakers list for the Entire Transcript of if you don't have speakers in the VTT file. |
 
-
 #### Outputs
 
 - `sentences` or `groupedSentences`: An object containing the formatted transcript data with the following properties:
@@ -183,6 +188,7 @@ This processes locally, so there are no explicit permissions required.
 $transcriptData=Get-WebVTTContent.ps1 -TranscriptFile <path to your transcript file> `
     -TimeIncrement 30 -Speakers "Speaker1","Speaker2"
 ```
+
 ### 5. `Add-TranscriptionItemsToGraph.ps1`
 
 This script loads transcript information into the Graph and is the last step in the sequence.
@@ -202,6 +208,7 @@ This script loads transcript information into the Graph and is the last step in 
 | LastModifiedDateTime | DateTime | Last Modified Date of Recording |
 | StreamEndpoint | String | Stream Endpoint |
 | SearchExternalConnectionId | String | Connection Id of the Microsoft Graph External Connection created to host these files |
+| Category | String | Optional category for the video, extracted from file name or manually specified |
 
 #### Required Permissions
 
@@ -230,7 +237,8 @@ Add-TranscriptItemsToGraph -TranscriptItems $transcriptData `
     -FileExtension $recordingFileInfo.FileType `
     -LastModifiedDateTime $meetingRecordingInfo.EndDateTime `
     -FileUrl $recordingFileInfo.FileUrl `
-    -SiteUrl $recordingFileInfo.SiteUrl
+    -SiteUrl $recordingFileInfo.SiteUrl `
+    -Category $category
 ```
 
 ### `Get-StreamTranscriptViaSharePoint.ps1`
