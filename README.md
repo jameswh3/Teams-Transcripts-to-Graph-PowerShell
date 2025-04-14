@@ -340,7 +340,7 @@ Thanks to https://www.techmikael.com/2021/01/microsoft-graph-encoding-and-decodi
 #### Required Permissions
 |API|Type|Permission|Note|
 |---|---|---|---|
-| SharePoint | User | Read | ... |
+| SharePoint | Delegated | Read |  |
 
 #### Inputs
 
