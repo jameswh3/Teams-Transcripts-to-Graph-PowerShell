@@ -10,6 +10,7 @@ This repository contains PowerShell scripts to manage and process Microsoft Team
   - `Microsoft.Graph`
   - `MicrosoftTeams`
 - Entra App Registration with Appropriate permissions (details below)
+- Videos accessible via Microsoft Stream (required for URLs with timestamps and transcript generation)
 
 **If you run into issues with conflicts between PnP.PowerShell and Microsoft.Graph, check out https://github.com/TobiasAT/PowerShell/blob/main/Documentation/Resolve-TAPnPPowerShellConflicts.md.**
 
