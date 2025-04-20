@@ -51,7 +51,7 @@ $transcriptFile=Get-MeetingTranscript `
 
 #region STEP 4
 #Parse Transcript File#
-$transcriptData=Format-TeamsTranscriptByTime `
+$transcriptData=Get-WebVTTContent `
     -TranscriptFile $transcriptFile `
     -TimeIncrement 30
 #endregion

@@ -19,7 +19,7 @@
 
 #region STEP 2
     #Parse Transcript File#
-    $transcriptData=Format-TeamsTranscriptByTime `
+    $transcriptData=Get-WebVTTContent `
         -TranscriptFile $transcriptFile `
         -SegmentSize 30
 #endregion
