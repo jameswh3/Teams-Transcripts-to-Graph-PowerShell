@@ -1,16 +1,17 @@
-#STEP 1
-#Connect to Graph#
-$clientId="<EntraAppId that you've registered>"
-$tenantId="<Your Tenant ID - GUID>"
-$certThumbprint="<certificate thumbprint>"
-$certStore="Cert:\CurrentUser\My\" #if you are storking your certificate in a different location, update this path
-$cert=Get-ChildItem "$certStore\$certThumbprint"
-Connect-MgGraph -ClientId $clientId `
-    -TenantId $tenantId `
-    -Certificate $cert `
-    -NoWelcome
+#region STEP 1a
+    #Connect to Graph#
+    $clientId="<EntraAppId that you've registered>"
+    $tenantId="<Your Tenant ID - GUID>"
+    $certThumbprint="<certificate thumbprint>"
+    $certStore="Cert:\CurrentUser\My\" #if you are storking your certificate in a different location, update this path
+    $cert=Get-ChildItem "$certStore\$certThumbprint"
+    Connect-MgGraph -ClientId $clientId `
+        -TenantId $tenantId `
+        -Certificate $cert `
+        -NoWelcome
+#endregion
 
-#STEP 2
+#region STEP 1b
 #Retrieve Meeting Info#
 $startDateTime="2025-02-09T00:00:00Z" #note this is UTC; update to your date range
 $endDateTime="2025-02-12T11:59:59Z" #note this is UTC; update to your date range
@@ -21,8 +22,9 @@ $meetingRecordingInfo=Get-MeetingRecordingInfo `
     -startDateTime $startDateTime `
     -endDateTime $endDateTime `
     -MeetingSubject $meetingSubject
+#endregion
 
-#STEP 3
+#region STEP 2
 #Retrieve SharePoint File Info#
 $tenant="<your tenant name>.onmicrosoft.com"
 $oneDriveBaseUrl = "https://<your tenant name>-my.sharepoint.com"
@@ -35,8 +37,9 @@ $recordingFileInfo=Get-OnlineMeetingRecordingSharePointFileInfo `
     -Tenant $tenant `
     -OneDriveRecordingsLibraryName $recordingLibraryName `
     -CertificateThumbprint $certThumbprint
+#endregion
 
-#STEP 4
+#region STEP 3
 #Retrieve Transcript File#
 $transcriptFile=Get-MeetingTranscript `
     -meetingOrganizerUserId $meetingRecordingInfo.MeetingHostId `
@@ -44,14 +47,16 @@ $transcriptFile=Get-MeetingTranscript `
     -meetingSubject $meetingRecordingInfo.MeetingSubject `
     -transcriptFilePath "<Local Path to save Transcript File>" ` #update to your preferred location
     -ContentCorrelationId $meetingRecordingInfo.ContentCorrelationId
+#endregion
 
-#STEP 5
+#region STEP 4
 #Parse Transcript File#
 $transcriptData=Format-TeamsTranscriptByTime `
     -TranscriptFile $transcriptFile `
     -TimeIncrement 30
+#endregion
 
-#STEP 6
+#region STEP 5a
 #Connect to SharePoint Admin#
 $SPOAdminUrl = "https://<your tenant name>-admin.sharepoint.com"
 $streamEndpoint="/_layouts/15/stream.aspx"
@@ -60,8 +65,9 @@ Connect-PnPOnline -Url "$SPOAdminUrl" `
                 -ClientId $ClientId `
                 -Tenant $Tenant `
                 -Thumbprint $certThumbprint
+#endregion
 
-#STEP 7
+#region STEP 5b
 #Add Transcript Items to Graph#
 $category="<add your category for this video>"
 Add-TranscriptItemsToGraph -TranscriptItems $transcriptData `
@@ -77,3 +83,4 @@ Add-TranscriptItemsToGraph -TranscriptItems $transcriptData `
     -LastModifiedDateTime $meetingRecordingInfo.EndDateTime `
     -FileUrl $recordingFileInfo.FileUrl `
     -SiteUrl $recordingFileInfo.SiteUrl
+#endregion

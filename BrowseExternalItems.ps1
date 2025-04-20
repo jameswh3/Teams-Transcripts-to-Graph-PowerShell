@@ -10,4 +10,4 @@ Connect-PnPOnline -Interactive `
     -Url $SPOAdminUrl `
     -ClientId $clientId
 
-Get-PnpSearchExternalItem -ConnectionId $searchExternalConnectionId 
+Get-PnpSearchExternalItem -ConnectionId $searchExternalConnectionId
