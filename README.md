@@ -34,15 +34,19 @@ Note that the External Graph Connection needs to be set up prior to
 | `Get-StreamTranscriptViaSharePoint.ps1` | Retrieves the transcript files for Microsoft Stream videos stored in a SharePoint document library. |
 | `Get-WebVTTContent.ps1` | Processes WebVTT files and extracts transcript data, optionally grouping sentences into segments. |
 
-# One-time Graph Connector Setup
+## One-time Graph Connector Setup
 
 Before using either of the approaches, you need to set up a Microsoft Graph connector to index and make the transcript data searchable. The [`ConfigureSearchConnection.ps1`](ConfigureSearchConnection.ps1) script creates the necessary search connection and schema.
 
-## Required Permissions
+### Required Permissions
 
-- Microsoft Graph: ExternalConnection.ReadWrite.OwnedBy or ExternalConnection.ReadWrite.All
+### Required Permissions
 
-## Steps
+| API              | Type         | Permission                       | Description                                                                 |
+|------------------|--------------|----------------------------------|-----------------------------------------------------------------------------|
+| Microsoft Graph  | Application  | ExternalConnection.ReadWrite.OwnedBy <br> ExternalConnection.ReadWrite.All | Allows the app to manage external connections it owns. |
+
+### Steps
 
 1. Review and modify the connection details in the script:
    - `$searchExternalConnectionName` - A display name for your connection
@@ -72,11 +76,11 @@ Before using either of the approaches, you need to set up a Microsoft Graph conn
 
 4. Note the `$searchExternalConnectionId` value - you'll need this when running the transcript processing scripts.
 
-# Approach 1: Process Teams Meeting Recordings
+## Approach 1: Process Teams Meeting Recordings
 
 ![Transcripts From Teams Meetings](Assets/TranscriptsFromTeamsMeetings.png)
 
-## Process Overview
+### Process Overview
 
 The `Add-TranscriptsToGraphForTeamsMeeting.ps1` script follows these steps:
 
@@ -90,9 +94,9 @@ The `Add-TranscriptsToGraphForTeamsMeeting.ps1` script follows these steps:
     - [5a. Connect to SharePoint Admin](#step-5a-connect-to-sharepoint-admin)  
     - [5b. Add Transcript Items to Graph](#step-5b-add-transcript-items-to-graph)
 
-## Detailed Process
+### Detailed Process
 
-### STEP 1a: Connect to Graph API
+#### STEP 1a: Connect to Graph API
 
 Uses Microsoft Graph API to authenticate and establish connection.
 
@@ -103,22 +107,22 @@ Uses Microsoft Graph API to authenticate and establish connection.
 | Microsoft Graph  | Application  | User.Read.All               | Allows the app to read user properties                                          |
 | Microsoft Graph  | Application  | OnlineMeetings.ReadWrite    | Allows the app to read and create online meetings on your behalf.               |
 
-#### Example: Connect to Microsoft Graph API using Client ID, Tenant ID, and Certificate
+##### Example: Connect to Microsoft Graph API using Client ID, Tenant ID, and Certificate
 
 ``` PowerShell
-# Define variables
+## Define variables
 $ClientId = "<Your-Client-ID>"
 $TenantId = "<Your-Tenant-ID>"
 $CertificateThumbprint = "<Your-Certificate-Thumbprint>"
 
-# Import the Microsoft Graph module
+## Import the Microsoft Graph module
 Import-Module Microsoft.Graph
 
-# Authenticate with Microsoft Graph using certificate-based authentication
+## Authenticate with Microsoft Graph using certificate-based authentication
 Connect-MgGraph -ClientId $ClientId -TenantId $TenantId -CertificateThumbprint $CertificateThumbprint
 ```
 
-### STEP 1b: Get Meeting Recording Information
+#### STEP 1b: Get Meeting Recording Information
 
 Uses [`Get-MeetingRecordingInfo.ps1`](Get-MeetingRecordingInfo.ps1 ) to retrieve information about the Teams meeting recording.
 
@@ -135,21 +139,21 @@ Uses [`Get-MeetingRecordingInfo.ps1`](Get-MeetingRecordingInfo.ps1 ) to retrieve
 
 - `meetingRecordingInfo`: Object containing meeting host, ID, and content correlation ID.
 
-#### Example: Retrieve meeting recording information using Get-MeetingRecordingInfo.ps1
+##### Example: Retrieve meeting recording information using Get-MeetingRecordingInfo.ps1
 
 ```powershell
-# Define input parameters
+## Define input parameters
 $meetingOrganizerUserId = "organizer@contoso.com"
 $startDateTime = "2023-01-01T00:00:00Z"
 $endDateTime = "2023-01-31T23:59:59Z"
 $MeetingSubject = "Quarterly Business Review"
 
-# Run the script
+## Run the script
 $meetingRecordingInfo = .\Get-MeetingRecordingInfo.ps1 -meetingOrganizerUserId $meetingOrganizerUserId `
   -startDateTime $startDateTime -endDateTime $endDateTime -MeetingSubject $MeetingSubject
 ```
 
-### STEP 2: Get SharePoint File Information
+#### STEP 2: Get SharePoint File Information
 
 Uses [`Get-OnlineMeetingRecordingSharePointFileInfo.ps1`](Get-OnlineMeetingRecordingSharePointFileInfo.ps1 ) to locate the recording file in SharePoint.
 
@@ -176,7 +180,7 @@ Uses [`Get-OnlineMeetingRecordingSharePointFileInfo.ps1`](Get-OnlineMeetingRecor
 
 - `recordingFileInfo`: Object with file details (URL, name, type, etc.)
 
-#### Example: Retrieve SharePoint file information using Get-OnlineMeetingRecordingSharePointFileInfo.ps1
+##### Example: Retrieve SharePoint file information using Get-OnlineMeetingRecordingSharePointFileInfo.ps1
 
 ```powershell
 # Define input parameters
@@ -198,7 +202,7 @@ $recordingFileInfo = .\Get-OnlineMeetingRecordingSharePointFileInfo.ps1 -OneDriv
   -CertificateThumbprint $CertificateThumbprint
 ```
 
-### STEP 3: Download Meeting Transcript
+#### STEP 3: Download Meeting Transcript
 
 Uses [`Get-MeetingTranscript.ps1`](Get-MeetingTranscript.ps1 ) to download the transcript file.
 
@@ -224,7 +228,7 @@ Uses [`Get-MeetingTranscript.ps1`](Get-MeetingTranscript.ps1 ) to download the t
 
 - `transcriptFile`: Path to the downloaded transcript file
 
-#### Example: Retrieve transcript file using Get-MeetingTranscript.ps1
+##### Example: Retrieve transcript file using Get-MeetingTranscript.ps1
 
 ```powershell
 # Define input parameters
@@ -239,7 +243,8 @@ $transcriptFile = .\Get-MeetingTranscript.ps1 -meetingOrganizerUserId $meetingOr
   -meetingId $meetingId -meetingSubject $meetingSubject `
   -transcriptFilePath $transcriptFilePath -ContentCorrelationId $ContentCorrelationId
 ```
-### STEP 4: Process Transcript Data
+
+#### STEP 4: Process Transcript Data
 
 Uses [`Get-WebVTTContent.ps1`](Get-WebVTTContent.ps1) to process the transcript file and extract structured data.
 
@@ -255,7 +260,7 @@ Uses [`Get-WebVTTContent.ps1`](Get-WebVTTContent.ps1) to process the transcript 
 
 - `transcriptData`: Structured transcript data, including time segments, speaker information, and transcript content.
 
-### Example: Process Transcript Data
+#### Example: Process Transcript Data
 
 ```powershell
 # Define input parameters
@@ -267,7 +272,7 @@ $Speakers = @("Speaker1", "Speaker2") # Optional speaker names
 $transcriptData = .\Get-WebVTTContent.ps1 -VTTFilePath $VTTFilePath -SegmentSize $SegmentSize -Speakers $Speakers
 ```
 
-### STEP 5a: Connect to SharePoint Admin
+#### STEP 5a: Connect to SharePoint Admin
 
 **Required Permissions:**
 
@@ -288,7 +293,7 @@ $CertificateThumbprint = "<Your-Certificate-Thumbprint>"
 Connect-PnPOnline -Url $AdminSiteUrl -ClientId $ClientId -Tenant $Tenant -CertificateThumbprint $CertificateThumbprint
 ```
 
-### STEP 5b: Add Transcript Items to Graph
+#### STEP 5b: Add Transcript Items to Graph
 
 Uses [`Add-TranscriptItemsToGraph.ps1`](Add-TranscriptItemsToGraph.ps1 ) to add the formatted transcript data to Microsoft Graph.
 
@@ -346,11 +351,11 @@ $Category = "Business Review"
   -Category $Category
 ```
 
-# Approach 2: Process Stream Upload Videos
+## Approach 2: Process Stream Upload Videos
 
 ![Transcripts From Stream Upload](Assets/TranscriptsFromStreamUpload.png)
 
-## Process Overview
+### Process Overview
 
 The [`Add-TranscriptsToGraphForStreamUpload.ps1`](Add-TranscriptsToGraphForStreamUpload.ps1 ) script follows these steps:
 
@@ -362,9 +367,9 @@ The [`Add-TranscriptsToGraphForStreamUpload.ps1`](Add-TranscriptsToGraphForStrea
     - [3a. Connect to SharePoint Admin](#step-3a-connect-to-sharepoint-admin)  
     - [3b. Add Transcript Items to Graph](#step-3b-add-transcript-items-to-graph)  
 
-## Detailed Process
+### Detailed Process
 
-### STEP 1a: Connect to SharePoint Site
+#### STEP 1a: Connect to SharePoint Site
 
 Establishes connection to the SharePoint site where Stream videos are stored.
 
@@ -376,16 +381,15 @@ Establishes connection to the SharePoint site where Stream videos are stored.
 | Microsoft Graph  | Application  | OnlineMeetings.ReadWrite         | Allows the app to read and create online meetings on your behalf.          |
 | Microsoft Graph  | Application  | OnlineMeetingTranscript.Read.All | Allows the app to read all transcripts of online meetings, on your behalf. |
 
-
 ```powershell
-# Define input parameters
+#Define input parameters
 $SiteUrl = "https://contoso.sharepoint.com/sites/StreamVideos"
 $DocumentLibrary = "Documents"
 $SharePointFolder = "Transcripts"
 $DestinationFolder = "C:\Transcripts"
 $PnPWebConnection = Connect-PnPOnline -Url $SiteUrl -UseWebLogin
 
-# Run the script to retrieve transcript files
+#Run the script to retrieve transcript files
 .\Get-StreamTranscriptViaSharePoint.ps1 -SiteUrl $SiteUrl `
   -DocumentLibrary $DocumentLibrary `
   -SharePointFolder $SharePointFolder `
@@ -393,13 +397,15 @@ $PnPWebConnection = Connect-PnPOnline -Url $SiteUrl -UseWebLogin
   -PnPWebConnection $PnPWebConnection
 ```
 
-### STEP 1b: Get Stream Transcript Files
+#### STEP 1b: Get Stream Transcript Files
 
 Uses [`Get-StreamTranscriptViaSharePoint.ps1`](Get-StreamTranscriptViaSharePoint.ps1 ) to retrieve transcript files from Stream videos.
 
 **Required Permissions:**
 
-- SharePoint: Read (delegated)
+| API              | Type         | Permission                 | Description                                                                  |
+|------------------|--------------|----------------------------|------------------------------------------------------------------------------|
+| SharePoint       | Delegated    | Sites.Read.All             | Allows the app to read items in all site collections the user has access to. |
 
 **Inputs:**
 
@@ -429,7 +435,7 @@ $DestinationFolder = "C:\Transcripts"
   -DestinationFolder $DestinationFolder
 ```
 
-### STEP 2: Process Transcript Files
+#### STEP 2: Process Transcript Files
 
 Uses [`Get-WebVTTContent.ps1`](Get-WebVTTContent.ps1 ) to process WebVTT transcript files.
 
@@ -455,7 +461,7 @@ $Speakers = @("Speaker1", "Speaker2") # Optional speaker names
 $transcriptData = .\Get-WebVTTContent.ps1 -VTTFilePath $VTTFilePath -SegmentSize $SegmentSize -Speakers $Speakers
 ```
 
-### STEP 3a: Connect to SharePoint Admin
+#### STEP 3a: Connect to SharePoint Admin
 
 Establishes connection to SharePoint Admin center.
 
@@ -465,7 +471,7 @@ Establishes connection to SharePoint Admin center.
 |------------------|--------------|----------------------------|---------------------------------------------|
 | Microsoft Graph  | Application  | ExternalItem.ReadWrite.All | Allows App to Write External Items to Graph |
 
-#### Example: Connecting to SharePoint Online
+##### Example: Connecting to SharePoint Online
 
 ```powershell
 # Define input parameters
@@ -478,11 +484,11 @@ $CertificateThumbprint = "<Your-Certificate-Thumbprint>"
 Connect-PnPOnline -Url $AdminSiteUrl -ClientId $ClientId -Tenant $Tenant -CertificateThumbprint $CertificateThumbprint
 ```
 
-### STEP 3b: Add Transcript Items to Graph
+#### STEP 3b: Add Transcript Items to Graph
 
 Uses [`Add-TranscriptItemsToGraph.ps1`](Add-TranscriptItemsToGraph.ps1 ) to add the formatted transcript data to Microsoft Graph.
 
-#### Example: Pushing parsed transcript data into the Microsoft Graph.
+##### Example: Pushing parsed transcript data into the Microsoft Graph
 
 ```powershell
 # Define input parameters
