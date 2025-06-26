@@ -16,13 +16,13 @@ function Get-StreamTranscriptViaSharePoint {
         $web=get-pnpweb -Connection $PnPWebConnection -Includes Id
         $library=Get-PnPList $DocumentLibrary -Connection $PnPWebConnection -Includes Id
         #construct the drive id
+        $DestinationFolder=$DestinationFolder.Trim("\")
         $siteIdGuid = $site.Id
         $webIdGuid = $web.Id
         $listIdGuid = $library.Id
-        $DestinationFolder=$DestinationFolder.Trim("\")
         $bytes = $siteIdGuid.ToByteArray() + $webIdGuid.ToByteArray() + $listIdGuid.ToByteArray()
         $driveId = "b!" + ([Convert]::ToBase64String($bytes)).Replace('/','_').Replace('+','-') 
-        write-host $driveId
+        #write-host $driveId
         $folderUrl="$DocumentLibrary"
         if ($SharePointFolder) {
             $folderUrl="$folderUrl/$SharePointFolder"

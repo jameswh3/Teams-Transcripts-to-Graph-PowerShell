@@ -253,7 +253,7 @@ Uses [`Get-WebVTTContent.ps1`](Get-WebVTTContent.ps1) to process the transcript 
 | Input Name  | Type   | Notes                                   |
 |-------------|--------|-----------------------------------------|
 | VTTFilePath | String | Path to the WebVTT transcript file      |
-| SegmentSize | Int    | Size of each segment in minutes         |
+| SegmentSize | Int    | Size of each segment in secnods         |
 | Speakers    | Array  | Optional array of speaker names         |
 
 **Outputs:**
@@ -265,7 +265,7 @@ Uses [`Get-WebVTTContent.ps1`](Get-WebVTTContent.ps1) to process the transcript 
 ```powershell
 # Define input parameters
 $VTTFilePath = "C:\Transcripts\MeetingTranscript.vtt"
-$SegmentSize = 5 # Segment size in minutes
+$SegmentSize = 30 # Segment size in seconds
 $Speakers = @("Speaker1", "Speaker2") # Optional speaker names
 
 # Run the script to process the transcript file
