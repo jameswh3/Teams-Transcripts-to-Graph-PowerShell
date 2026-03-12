@@ -1,3 +1,4 @@
+.env
 Testing.ps1
 transcript.txt
 Resolve-TAPnPPowerShellConflicts.ps1
